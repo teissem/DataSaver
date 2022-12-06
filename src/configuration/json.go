@@ -13,6 +13,7 @@ type GitConfiguration struct {
 
 type Configuration struct {
 	Destination string           `json:"destination"`
+	Compression string           `json:"compression"`
 	Folder      []string         `json:"folder"`
 	Git         GitConfiguration `json:"git"`
 }
