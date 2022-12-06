@@ -21,3 +21,6 @@
 # Go workspace file
 go.work
 
+# Configuration file
+configuration.json
+
