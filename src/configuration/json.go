@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
+	"path/filepath"
 )
 
 // ParseJSON is use to parse json configuration file.
-func ParseJSON(path string) (*Configuration, error) {
-	byteValueJSON, err := os.ReadFile(path)
+func ParseJSON(source string) (*Configuration, error) {
+	byteValueJSON, err := os.ReadFile(filepath.Clean(source))
 	if err != nil {
 		return nil, errors.New("[ERROR] Reading file : " + err.Error())
 	}

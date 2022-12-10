@@ -1,6 +1,6 @@
 package configuration
 
-type Parser func(path string) (*Configuration, error)
+type Parser func(source string) (*Configuration, error)
 
 type GitConfiguration struct {
 	Username     string   `json:"username"`
