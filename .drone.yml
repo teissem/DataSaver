@@ -12,4 +12,4 @@ steps:
 - name: gosec
   image: securego/gosec:2.14.0
   commands: 
-  - gosec --version
+  - gosec ./...
