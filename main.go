@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -29,5 +28,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("[ERROR] JSON parsing : " + err.Error())
 	}
-	fmt.Printf("%+v", config)
+	log.Printf("%+v", config)
 }
