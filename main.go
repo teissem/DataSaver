@@ -12,8 +12,9 @@ import (
 
 func main() {
 	// Arguments waited : <configuration_file>
+	const waitedArguments = 2
 	arguments := os.Args
-	if len(arguments) < 2 {
+	if len(arguments) < waitedArguments {
 		log.Fatalf("[ERROR] Usage : ./main <configuration_file>")
 	}
 	fileExtension := path.Ext(os.Args[1])

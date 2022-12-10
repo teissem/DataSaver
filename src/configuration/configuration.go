@@ -1,6 +1,6 @@
 package configuration
 
-type ConfigurationParser func(path string) (*Configuration, error)
+type Parser func(path string) (*Configuration, error)
 
 type GitConfiguration struct {
 	Username     string   `json:"username"`
@@ -15,8 +15,8 @@ type Configuration struct {
 	Git         GitConfiguration `json:"git"`
 }
 
-func SupportedConfigurationFormat() map[string]ConfigurationParser {
-	configurationMap := make(map[string]ConfigurationParser)
+func SupportedConfigurationFormat() map[string]Parser {
+	configurationMap := make(map[string]Parser)
 	configurationMap[".json"] = ParseJSON
 	return configurationMap
 }
