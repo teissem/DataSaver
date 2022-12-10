@@ -5,20 +5,7 @@ import (
 	"os"
 )
 
-type GitConfiguration struct {
-	Username     string   `json:"username"`
-	Password     string   `json:"password"`
-	Repositories []string `json:"repositories"`
-}
-
-type Configuration struct {
-	Destination string           `json:"destination"`
-	Compression string           `json:"compression"`
-	Folder      []string         `json:"folder"`
-	Git         GitConfiguration `json:"git"`
-}
-
-// parse is use to parse json configuration file
+// ParseJSON is use to parse json configuration file
 func ParseJSON(path string) (*Configuration, error) {
 	byteValueJSON, err := os.ReadFile(path)
 	if err != nil {

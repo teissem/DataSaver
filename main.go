@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"path"
 
+	"golang.org/x/exp/maps"
 	"teissem.fr/data_saver/src/configuration"
 )
 
@@ -11,12 +14,19 @@ func main() {
 	// Arguments waited : <configuration_file>
 	arguments := os.Args
 	if len(arguments) < 2 {
-		fmt.Println("Usage : ./main <configuration_file>")
-		os.Exit(1)
+		log.Fatalf("[ERROR] Usage : ./main <configuration_file>")
 	}
-	config, err := configuration.ParseJSON(os.Args[1])
+	fileExtension := path.Ext(os.Args[1])
+	supportedConfigurationFormat := configuration.SupportedConfigurationFormat()
+	confParser, ok := supportedConfigurationFormat[fileExtension]
+	if !ok {
+		log.Fatalf("[ERROR] Configuration file must be in format %v, current format is %s\n",
+			maps.Keys(supportedConfigurationFormat),
+			fileExtension)
+	}
+	config, err := confParser(os.Args[1])
 	if err != nil {
-		fmt.Println("Error occurred when parsing JSON : " + err.Error())
+		log.Fatalf("[ERROR] JSON parsing : " + err.Error())
 	}
 	fmt.Printf("%+v", config)
 }
