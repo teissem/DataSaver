@@ -1,0 +1,14 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: lint_go
+  image: golangci/golangci-lint:v1.50.1
+  commands:
+  - golangci-lint --version
+- name: gosec
+  image: securego/gosec:2.14.0
+  commands: 
+  - gosec --version
