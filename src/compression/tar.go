@@ -18,7 +18,7 @@ func CompressTar(source, target string) error {
 	defer tarball.Close()
 	info, err := os.Stat(source)
 	if err != nil {
-		return nil
+		return err
 	}
 	var baseDir string
 	if info.IsDir() {

@@ -14,7 +14,7 @@ func GetGitRepositories(gitConfig *configuration.Git, destination string) error 
 		return nil
 	}
 	for _, srcDest := range gitConfig.Repositories {
-		git.PlainClone(path.Join(destination, srcDest.Destination), false, &git.CloneOptions{
+		_, err := git.PlainClone(path.Join(destination, srcDest.Destination), false, &git.CloneOptions{
 			Auth: &http.BasicAuth{
 				Username: gitConfig.Username,
 				Password: gitConfig.Password,
@@ -22,7 +22,13 @@ func GetGitRepositories(gitConfig *configuration.Git, destination string) error 
 			URL:      srcDest.Source,
 			Progress: os.Stdout,
 		})
-		os.RemoveAll(path.Join(destination, srcDest.Destination, ".git"))
+		if err != nil {
+			return err
+		}
+		err = os.RemoveAll(path.Join(destination, srcDest.Destination, ".git"))
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

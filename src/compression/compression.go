@@ -9,13 +9,17 @@ import (
 func Compress(configuration *configuration.Configuration) error {
 	switch configuration.Compression {
 	case "zip":
-		CompressZip(configuration.Destination, configuration.Destination+"."+configuration.Compression)
-		os.RemoveAll(configuration.Destination)
-		return nil
+		err := CompressZip(configuration.Destination, configuration.Destination+"."+configuration.Compression)
+		if err != nil {
+			return err
+		}
+		return os.RemoveAll(configuration.Destination)
 	case "tar":
-		CompressTar(configuration.Destination, configuration.Destination+"."+configuration.Compression)
-		os.RemoveAll(configuration.Destination)
-		return nil
+		err := CompressTar(configuration.Destination, configuration.Destination+"."+configuration.Compression)
+		if err != nil {
+			return err
+		}
+		return os.RemoveAll(configuration.Destination)
 	default:
 		return nil
 	}
