@@ -8,6 +8,8 @@ import (
 )
 
 func CompressZip(source, target string) error {
+	source = filepath.Clean(source)
+	target = filepath.Clean(target)
 	f, err := os.Create(target)
 	if err != nil {
 		return err

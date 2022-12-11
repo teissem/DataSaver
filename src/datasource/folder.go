@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"path/filepath"
 
 	"teissem.fr/data_saver/src/configuration"
 )
@@ -24,6 +25,8 @@ func GetFolders(folders *configuration.Folder, destination string) error {
 
 func copyFolder(source string, destination string) error {
 	const dirPermission = 0777
+	source = filepath.Clean(source)
+	destination = filepath.Clean(destination)
 	err := os.MkdirAll(destination, dirPermission)
 	if err != nil {
 		return err
