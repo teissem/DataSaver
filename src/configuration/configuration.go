@@ -2,14 +2,19 @@ package configuration
 
 type Parser func(source string) (*Configuration, error)
 
+type SrcDest struct {
+	Source      string `json:"source"`
+	Destination string `json:"destination"`
+}
+
 type Git struct {
-	Username     string   `json:"username"`
-	Password     string   `json:"password"`
-	Repositories []string `json:"repositories"`
+	Username     string    `json:"username"`
+	Password     string    `json:"password"`
+	Repositories []SrcDest `json:"repositories"`
 }
 
 type Folder struct {
-	Path []string `json:"path"`
+	Path []SrcDest `json:"path"`
 }
 
 type Configuration struct {

@@ -1,5 +1,7 @@
 package datasource
 
-func GetGitRepositories(sources []string, destination string) error {
-	return nil
+import "teissem.fr/data_saver/src/configuration"
+
+func GetGitRepositories(git *configuration.Git, destination string) error {
+
 }
