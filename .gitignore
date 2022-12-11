@@ -26,3 +26,5 @@ configuration.json
 
 # VSCode files
 .vscode
+
+.DS_store
