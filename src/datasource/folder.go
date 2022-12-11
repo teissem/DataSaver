@@ -23,7 +23,8 @@ func GetFolders(folders *configuration.Folder, destination string) error {
 }
 
 func copyFolder(source string, destination string) error {
-	err := os.MkdirAll(destination, 0777)
+	const dirPermission = 0777
+	err := os.MkdirAll(destination, dirPermission)
 	if err != nil {
 		return err
 	}

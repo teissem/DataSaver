@@ -7,7 +7,8 @@ import (
 )
 
 func GetData(configuration *configuration.Configuration) error {
-	err := os.MkdirAll(configuration.Destination, 0777)
+	const dirPermission = 0777
+	err := os.MkdirAll(configuration.Destination, dirPermission)
 	if err != nil {
 		return err
 	}
