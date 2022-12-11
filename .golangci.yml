@@ -20,7 +20,6 @@ linters:
     - errorlint
     - execinquery
     - exhaustive
-    - exhaustruct
     - exportloopref
     - forbidigo
     - forcetypeassert
@@ -35,7 +34,6 @@ linters:
     - godot
     - godox
     - gofmt
-    - gofumpt
     - goheader
     - goimports
     - gomnd
@@ -54,7 +52,6 @@ linters:
     - maintidx
     - makezero
     - nakedret
-    - nestif
     - nilerr
     - nilnil
     - noctx
@@ -85,4 +82,3 @@ linters:
     - varnamelen
     - wastedassign
     - whitespace
-    - wrapcheck
