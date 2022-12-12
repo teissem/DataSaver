@@ -3,21 +3,31 @@ package compression
 import (
 	"archive/tar"
 	"io"
+	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 )
 
 func CompressTar(source, target string) error {
-	source = filepath.Clean(source)
-	target = filepath.Clean(target)
-	tarfile, err := os.Create(target)
+	tarfile, err := os.Create(path.Clean(target))
 	if err != nil {
 		return err
 	}
-	defer tarfile.Close()
+	defer func() {
+		err = tarfile.Close()
+		if err != nil {
+			log.Printf("[ERROR] Failed to close destination file")
+		}
+	}()
 	tarball := tar.NewWriter(tarfile)
-	defer tarball.Close()
+	defer func() {
+		err = tarball.Close()
+		if err != nil {
+			log.Printf("[ERROR] Failed to close destination file writer")
+		}
+	}()
 	info, err := os.Stat(source)
 	if err != nil {
 		return err
@@ -26,7 +36,7 @@ func CompressTar(source, target string) error {
 	if info.IsDir() {
 		baseDir = filepath.Base(source)
 	}
-	return filepath.Walk(source, func(path string, info os.FileInfo, err error) error {
+	return filepath.Walk(source, func(currentPath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -35,7 +45,7 @@ func CompressTar(source, target string) error {
 			return err
 		}
 		if baseDir != "" {
-			header.Name = filepath.Join(baseDir, strings.TrimPrefix(path, source))
+			header.Name = filepath.Join(baseDir, strings.TrimPrefix(currentPath, source))
 		}
 		if err := tarball.WriteHeader(header); err != nil {
 			return err
@@ -43,11 +53,16 @@ func CompressTar(source, target string) error {
 		if info.IsDir() {
 			return nil
 		}
-		file, err := os.Open(path)
+		file, err := os.Open(path.Clean(currentPath))
 		if err != nil {
 			return err
 		}
-		defer file.Close()
+		defer func() {
+			err = file.Close()
+			if err != nil {
+				log.Printf("[ERROR] Failed to close destination file descriptor")
+			}
+		}()
 		_, err = io.Copy(tarball, file)
 		return err
 	})

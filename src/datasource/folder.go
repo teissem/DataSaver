@@ -2,9 +2,9 @@ package datasource
 
 import (
 	"io"
+	"log"
 	"os"
 	"path"
-	"path/filepath"
 
 	"teissem.fr/data_saver/src/configuration"
 )
@@ -16,7 +16,10 @@ func GetFolders(folders *configuration.Folder, destination string) error {
 	for _, srcDest := range folders.Path {
 		err := copyFolder(srcDest.Source, path.Join(destination, srcDest.Destination))
 		if err != nil {
-			os.RemoveAll(path.Join(destination, srcDest.Destination))
+			secondErr := os.RemoveAll(path.Join(destination, srcDest.Destination))
+			if secondErr != nil {
+				log.Printf("[ERROR] Failed to remove destination folder, a user clean can be necessary")
+			}
 			return err
 		}
 	}
@@ -25,8 +28,6 @@ func GetFolders(folders *configuration.Folder, destination string) error {
 
 func copyFolder(source string, destination string) error {
 	const dirPermission = 0777
-	source = filepath.Clean(source)
-	destination = filepath.Clean(destination)
 	err := os.MkdirAll(destination, dirPermission)
 	if err != nil {
 		return err
@@ -45,17 +46,27 @@ func copyFolder(source string, destination string) error {
 				return err
 			}
 		} else {
-			sourceFileBuffer, err := os.Open(path.Join(source, file.Name()))
+			sourceFileBuffer, err := os.Open(path.Join(path.Clean(source), file.Name()))
 			if err != nil {
 				return err
 			}
-			defer sourceFileBuffer.Close()
+			defer func() {
+				err = sourceFileBuffer.Close()
+				if err != nil {
+					log.Printf("[ERROR] Failed to close source file buffer")
+				}
+			}()
 
-			destinationFileBuffer, err := os.Create(path.Join(destination, file.Name()))
+			destinationFileBuffer, err := os.Create(path.Join(path.Clean(destination), file.Name()))
 			if err != nil {
 				return err
 			}
-			defer destinationFileBuffer.Close()
+			defer func() {
+				err = destinationFileBuffer.Close()
+				if err != nil {
+					log.Printf("[ERROR] Failed to close destination file buffer")
+				}
+			}()
 			_, err = io.Copy(destinationFileBuffer, sourceFileBuffer)
 			if err != nil {
 				return err

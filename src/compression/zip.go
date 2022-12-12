@@ -3,21 +3,31 @@ package compression
 import (
 	"archive/zip"
 	"io"
+	"log"
 	"os"
+	"path"
 	"path/filepath"
 )
 
 func CompressZip(source, target string) error {
-	source = filepath.Clean(source)
-	target = filepath.Clean(target)
-	f, err := os.Create(target)
+	f, err := os.Create(path.Clean(target))
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		err = f.Close()
+		if err != nil {
+			log.Printf("[ERROR] Failed to close destination file")
+		}
+	}()
 	writer := zip.NewWriter(f)
-	defer writer.Close()
-	return filepath.Walk(source, func(path string, info os.FileInfo, err error) error {
+	defer func() {
+		err = writer.Close()
+		if err != nil {
+			log.Printf("[ERROR] Failed to close destination file writer")
+		}
+	}()
+	return filepath.Walk(source, func(currentPath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -26,7 +36,7 @@ func CompressZip(source, target string) error {
 			return err
 		}
 		header.Method = zip.Deflate
-		header.Name, err = filepath.Rel(filepath.Dir(source), path)
+		header.Name, err = filepath.Rel(filepath.Dir(source), currentPath)
 		if err != nil {
 			return err
 		}
@@ -40,11 +50,16 @@ func CompressZip(source, target string) error {
 		if info.IsDir() {
 			return nil
 		}
-		f, err := os.Open(path)
+		f, err := os.Open(path.Clean(currentPath))
 		if err != nil {
 			return err
 		}
-		defer f.Close()
+		defer func() {
+			err = f.Close()
+			if err != nil {
+				log.Printf("[ERROR] Failed to close file descriptor")
+			}
+		}()
 		_, err = io.Copy(headerWriter, f)
 		return err
 	})
