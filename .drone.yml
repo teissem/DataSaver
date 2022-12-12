@@ -18,14 +18,12 @@ steps:
   environment:
     ACCESSTOKEN:
       from_secret: access_token
-    USERNAME:
-      from_secret: username
   commands:
   - apt update
   - apt install curl
   - go get ./...
   - go build
-  - curl -v --user ${USERNAME}:${ACCESSTOKEN} -X PUT --upload-file data_saver https://git.teissem.fr:13443/api/packages/ALEM/generic/data_saver/${DRONE_TAG}/data_saver
+  - curl --upload-file data_saver https://git.teissem.fr:13443/api/packages/ALEM/generic/data_saver/${DRONE_TAG}/data_saver?access_token=$ACCESSTOKEN
   when:
     event:
     - tag
