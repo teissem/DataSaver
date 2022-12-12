@@ -24,3 +24,7 @@ go.work
 # Configuration file
 configuration.json
 
+# VSCode files
+.vscode
+
+.DS_store

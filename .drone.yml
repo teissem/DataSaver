@@ -1,0 +1,28 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: lint_go
+  image: golangci/golangci-lint:v1.50.1
+  commands:
+  - golangci-lint --version
+  - golangci-lint run
+- name: gosec
+  image: securego/gosec:2.14.0
+  commands: 
+  - gosec ./...
+- name: build_and_publish
+  image: golang:1.19.4-bullseye
+  environment:
+    ACCESSTOKEN:
+      from_secret: access_token
+  commands:
+  - apt install curl
+  - go get ./...
+  - go build
+  - curl --upload-file data_saver https://git.teissem.fr:13443/api/packages/ALEM/generic/data_saver/${DRONE_TAG}/data_saver?access_token=$ACCESSTOKEN
+  when:
+    event:
+    - tag

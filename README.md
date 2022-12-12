@@ -9,15 +9,24 @@ Configuration file is in JSON format :
 ```json
 {
     "destination" : "...",
+    "compression" : "...",
     "git" : {
-        "username" : "",
-        "password" : "",
+        "username" : "...",
+        "password" : "...",
         "repositories" : [
-            "...", "..."
+            { "source" : "...", "destination" : "..." },
+            { "source" : "...", "destination" : "..." }
         ]
     },
-    "folder" : [
-        "...", "...", "..."
-    ]
+    "folder" : {
+        "path" : [
+            { "source" : "...", "destination" : "..." },
+            { "source" : "...", "destination" : "..." }
+        ]
+    }
 }
 ```
+
+## Architecture of the project
+
+To see the architecture of the project, go to `doc/architecture.md`
