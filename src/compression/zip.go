@@ -10,17 +10,17 @@ import (
 )
 
 func CompressZip(source, target string) error {
-	f, err := os.Create(path.Clean(target))
+	file, err := os.Create(path.Clean(target))
 	if err != nil {
 		return err
 	}
 	defer func() {
-		err = f.Close()
+		err = file.Close()
 		if err != nil {
 			log.Printf("[ERROR] Failed to close destination file")
 		}
 	}()
-	writer := zip.NewWriter(f)
+	writer := zip.NewWriter(file)
 	defer func() {
 		err = writer.Close()
 		if err != nil {
@@ -50,17 +50,17 @@ func CompressZip(source, target string) error {
 		if info.IsDir() {
 			return nil
 		}
-		f, err := os.Open(path.Clean(currentPath))
+		file, err := os.Open(path.Clean(currentPath))
 		if err != nil {
 			return err
 		}
 		defer func() {
-			err = f.Close()
+			err = file.Close()
 			if err != nil {
 				log.Printf("[ERROR] Failed to close file descriptor")
 			}
 		}()
-		_, err = io.Copy(headerWriter, f)
+		_, err = io.Copy(headerWriter, file)
 		return err
 	})
 }

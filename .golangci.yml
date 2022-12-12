@@ -7,7 +7,6 @@ linters:
     - bodyclose
     - containedctx
     - contextcheck
-    - cyclop
     - decorder
     - depguard
     - dogsled
