@@ -18,6 +18,7 @@ func ParseJSON(source string) (*Configuration, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unmarshal json : %s", err.Error())
 	}
-	configuration.Destination = CalculateDestination(configuration.Destination)
+	configuration.Destination = CalculatePath(configuration.Destination)
+	configuration.Log = CalculatePath(configuration.Log)
 	return &configuration, nil
 }

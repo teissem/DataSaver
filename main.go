@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"log"
 	"os"
 	"path"
@@ -32,6 +33,18 @@ func main() {
 	if err != nil {
 		log.Fatalf("[ERROR] Parsing the configuration file : " + err.Error())
 	}
+	logFile, err := os.OpenFile(config.Log, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
+	if err != nil {
+		log.Fatalf("[ERROR] Opening file : " + err.Error())
+	}
+	defer func() {
+		err = logFile.Close()
+		if err != nil {
+			log.Printf("[ERROR] failed to close %s : %s", config.Log, err.Error())
+		}
+	}()
+	mw := io.MultiWriter(os.Stdout, logFile)
+	log.SetOutput(mw)
 	// Get all the data selected in the configuration file
 	log.Printf("[INFO] Get data... ")
 	err = datasource.GetData(config)

@@ -9,6 +9,7 @@ Configuration file is in JSON format :
 ```json
 {
     "destination" : "...",
+    "log" : "...",
     "compression" : "...",
     "git" : {
         "username" : "...",
