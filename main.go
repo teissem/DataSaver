@@ -33,7 +33,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("[ERROR] Parsing the configuration file : " + err.Error())
 	}
-	logFile, err := os.OpenFile(config.Log, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
+	const logPermission = 0666
+	logFile, err := os.OpenFile(path.Clean(config.Log), os.O_CREATE|os.O_APPEND|os.O_RDWR, logPermission)
 	if err != nil {
 		log.Fatalf("[ERROR] Opening file : " + err.Error())
 	}
@@ -49,14 +50,16 @@ func main() {
 	log.Printf("[INFO] Get data... ")
 	err = datasource.GetData(config)
 	if err != nil {
-		log.Fatalf("[ERROR] Get data from source : " + err.Error())
+		log.Printf("[ERROR] Get data from source : " + err.Error())
+		return
 	}
 	log.Printf("[INFO] Get data done")
 	// Compress the result
 	log.Printf("[INFO] Compression... ")
 	err = compression.Compress(config)
 	if err != nil {
-		log.Fatalf("[ERROR] Compression : " + err.Error())
+		log.Printf("[ERROR] Compression : " + err.Error())
+		return
 	}
 	log.Printf("[INFO] Compression done")
 	log.Printf("[INFO] Data saved successfully")

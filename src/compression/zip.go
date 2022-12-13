@@ -13,7 +13,7 @@ import (
 func CompressZip(source, target string) error {
 	file, err := os.Create(path.Clean(target))
 	if err != nil {
-		return fmt.Errorf("create %s : %s", target, err.Error())
+		return fmt.Errorf("create %s : %w", target, err)
 	}
 	defer func() {
 		err = file.Close()
@@ -30,30 +30,30 @@ func CompressZip(source, target string) error {
 	}()
 	return filepath.Walk(source, func(currentPath string, info os.FileInfo, err error) error {
 		if err != nil {
-			return fmt.Errorf("previous error : %s", err.Error())
+			return fmt.Errorf("previous error : %w", err)
 		}
 		header, err := zip.FileInfoHeader(info)
 		if err != nil {
-			return fmt.Errorf("create file info header : %s", err.Error())
+			return fmt.Errorf("create file info header : %w", err)
 		}
 		header.Method = zip.Deflate
 		header.Name, err = filepath.Rel(filepath.Dir(source), currentPath)
 		if err != nil {
-			return fmt.Errorf("relative path for %s of %s : %s", currentPath, filepath.Dir(source), err.Error())
+			return fmt.Errorf("relative path for %s of %s : %w", currentPath, filepath.Dir(source), err)
 		}
 		if info.IsDir() {
 			header.Name += "/"
 		}
 		headerWriter, err := writer.CreateHeader(header)
 		if err != nil {
-			return fmt.Errorf("create header : %s", err.Error())
+			return fmt.Errorf("create header : %w", err)
 		}
 		if info.IsDir() {
 			return nil
 		}
 		file, err := os.Open(path.Clean(currentPath))
 		if err != nil {
-			return fmt.Errorf("open file %s : %s", currentPath, err.Error())
+			return fmt.Errorf("open file %s : %w", currentPath, err)
 		}
 		defer func() {
 			err = file.Close()
@@ -63,7 +63,7 @@ func CompressZip(source, target string) error {
 		}()
 		_, err = io.Copy(headerWriter, file)
 		if err != nil {
-			return fmt.Errorf("copy file : %s", err.Error())
+			return fmt.Errorf("copy file : %w", err)
 		}
 		return err
 	})

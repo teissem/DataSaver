@@ -24,11 +24,11 @@ func GetGitRepositories(gitConfig *configuration.Git, destination string) error 
 			Progress: os.Stdout,
 		})
 		if err != nil {
-			return fmt.Errorf("git plain clone %s : %s", srcDest.Source, err.Error())
+			return fmt.Errorf("git plain clone %s : %w", srcDest.Source, err)
 		}
 		err = os.RemoveAll(path.Join(destination, srcDest.Destination, ".git"))
 		if err != nil {
-			return fmt.Errorf("remove .git : %s", err.Error())
+			return fmt.Errorf("remove .git : %w", err)
 		}
 	}
 	return nil

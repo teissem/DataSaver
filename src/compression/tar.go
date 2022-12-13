@@ -14,7 +14,7 @@ import (
 func CompressTar(source, target string) error {
 	tarfile, err := os.Create(path.Clean(target))
 	if err != nil {
-		return fmt.Errorf("create %s : %s", target, err)
+		return fmt.Errorf("create %s : %w", target, err)
 	}
 	defer func() {
 		err = tarfile.Close()
@@ -31,7 +31,7 @@ func CompressTar(source, target string) error {
 	}()
 	info, err := os.Stat(source)
 	if err != nil {
-		return fmt.Errorf("stat on %s : %s", source, err.Error())
+		return fmt.Errorf("stat on %s : %w", source, err)
 	}
 	var baseDir string
 	if info.IsDir() {
@@ -39,24 +39,24 @@ func CompressTar(source, target string) error {
 	}
 	return filepath.Walk(source, func(currentPath string, info os.FileInfo, err error) error {
 		if err != nil {
-			return fmt.Errorf("previous error : %s", err.Error())
+			return fmt.Errorf("previous error : %w", err)
 		}
 		header, err := tar.FileInfoHeader(info, info.Name())
 		if err != nil {
-			return fmt.Errorf("create file info header %s : %s", info.Name(), err.Error())
+			return fmt.Errorf("create file info header %s : %w", info.Name(), err)
 		}
 		if baseDir != "" {
 			header.Name = filepath.Join(baseDir, strings.TrimPrefix(currentPath, source))
 		}
 		if err := tarball.WriteHeader(header); err != nil {
-			return fmt.Errorf("write header : %s", err.Error())
+			return fmt.Errorf("write header : %w", err)
 		}
 		if info.IsDir() {
 			return nil
 		}
 		file, err := os.Open(path.Clean(currentPath))
 		if err != nil {
-			return fmt.Errorf("open %s : %s", currentPath, err.Error())
+			return fmt.Errorf("open %s : %w", currentPath, err)
 		}
 		defer func() {
 			err = file.Close()
@@ -66,7 +66,7 @@ func CompressTar(source, target string) error {
 		}()
 		_, err = io.Copy(tarball, file)
 		if err != nil {
-			return fmt.Errorf("copy error : %s", err.Error())
+			return fmt.Errorf("copy error : %w", err)
 		}
 		return nil
 	})

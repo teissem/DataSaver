@@ -21,7 +21,7 @@ func GetFolders(folders *configuration.Folder, destination string) error {
 			if secondErr != nil {
 				log.Printf("[ERROR] Failed to remove destination folder, a user clean can be necessary")
 			}
-			return fmt.Errorf("copy folder : %s", err.Error())
+			return fmt.Errorf("copy folder : %w", err)
 		}
 	}
 	return nil
@@ -31,25 +31,25 @@ func copyFolder(source string, destination string) error {
 	const dirPermission = 0777
 	err := os.MkdirAll(destination, dirPermission)
 	if err != nil {
-		return fmt.Errorf("mkdir all %s : %s", destination, err.Error())
+		return fmt.Errorf("mkdir all %s : %w", destination, err)
 	}
 	if _, err := os.Stat(source); os.IsNotExist(err) {
-		return fmt.Errorf("stat %s : %s", source, err.Error())
+		return fmt.Errorf("stat %s : %w", source, err)
 	}
 	files, err := os.ReadDir(source)
 	if err != nil {
-		return fmt.Errorf("read dir %s : %s", source, err.Error())
+		return fmt.Errorf("read dir %s : %w", source, err)
 	}
 	for _, file := range files {
 		if file.IsDir() {
 			err := copyFolder(path.Join(source, file.Name()), path.Join(destination, file.Name()))
 			if err != nil {
-				return fmt.Errorf("copy folder : %s", err.Error())
+				return fmt.Errorf("copy folder : %w", err)
 			}
 		} else {
 			sourceFileBuffer, err := os.Open(path.Join(path.Clean(source), file.Name()))
 			if err != nil {
-				return fmt.Errorf("open file %s : %s", path.Clean(source), err.Error())
+				return fmt.Errorf("open file %s : %w", path.Clean(source), err)
 			}
 			defer func() {
 				err = sourceFileBuffer.Close()
@@ -60,7 +60,7 @@ func copyFolder(source string, destination string) error {
 
 			destinationFileBuffer, err := os.Create(path.Join(path.Clean(destination), file.Name()))
 			if err != nil {
-				return fmt.Errorf("create file %s : %s", path.Clean(destination), err.Error())
+				return fmt.Errorf("create file %s : %w", path.Clean(destination), err)
 			}
 			defer func() {
 				err = destinationFileBuffer.Close()
@@ -70,7 +70,7 @@ func copyFolder(source string, destination string) error {
 			}()
 			_, err = io.Copy(destinationFileBuffer, sourceFileBuffer)
 			if err != nil {
-				return fmt.Errorf("copy file : %s", err.Error())
+				return fmt.Errorf("copy file : %w", err)
 			}
 		}
 	}
