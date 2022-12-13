@@ -11,15 +11,15 @@ func GetData(configuration *configuration.Configuration) error {
 	const dirPermission = 0777
 	err := os.MkdirAll(configuration.Destination, dirPermission)
 	if err != nil {
-		return fmt.Errorf("mkdir all %s : %s", configuration.Destination, err.Error())
+		return fmt.Errorf("mkdir all %s : %w", configuration.Destination, err)
 	}
 	err = GetFolders(&configuration.FolderSource, configuration.Destination)
 	if err != nil {
-		return fmt.Errorf("get folders : %s", err.Error())
+		return fmt.Errorf("get folders : %w", err)
 	}
 	err = GetGitRepositories(&configuration.GitSource, configuration.Destination)
 	if err != nil {
-		return fmt.Errorf("get git repositories : %s", err.Error())
+		return fmt.Errorf("get git repositories : %w", err)
 	}
 	return nil
 }
