@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -11,7 +12,7 @@ import (
 
 func GetFolders(folders *configuration.Folder, destination string) error {
 	if folders == nil || folders.Path == nil {
-		return nil
+		return fmt.Errorf("folders = %v, folders.Path = %v", folders, folders.Path)
 	}
 	for _, srcDest := range folders.Path {
 		err := copyFolder(srcDest.Source, path.Join(destination, srcDest.Destination))
@@ -20,7 +21,7 @@ func GetFolders(folders *configuration.Folder, destination string) error {
 			if secondErr != nil {
 				log.Printf("[ERROR] Failed to remove destination folder, a user clean can be necessary")
 			}
-			return err
+			return fmt.Errorf("copy folder : %s", err.Error())
 		}
 	}
 	return nil
@@ -30,25 +31,25 @@ func copyFolder(source string, destination string) error {
 	const dirPermission = 0777
 	err := os.MkdirAll(destination, dirPermission)
 	if err != nil {
-		return err
+		return fmt.Errorf("mkdir all %s : %s", destination, err.Error())
 	}
 	if _, err := os.Stat(source); os.IsNotExist(err) {
-		return err
+		return fmt.Errorf("stat %s : %s", source, err.Error())
 	}
 	files, err := os.ReadDir(source)
 	if err != nil {
-		return err
+		return fmt.Errorf("read dir %s : %s", source, err.Error())
 	}
 	for _, file := range files {
 		if file.IsDir() {
 			err := copyFolder(path.Join(source, file.Name()), path.Join(destination, file.Name()))
 			if err != nil {
-				return err
+				return fmt.Errorf("copy folder : %s", err.Error())
 			}
 		} else {
 			sourceFileBuffer, err := os.Open(path.Join(path.Clean(source), file.Name()))
 			if err != nil {
-				return err
+				return fmt.Errorf("open file %s : %s", path.Clean(source), err.Error())
 			}
 			defer func() {
 				err = sourceFileBuffer.Close()
@@ -59,7 +60,7 @@ func copyFolder(source string, destination string) error {
 
 			destinationFileBuffer, err := os.Create(path.Join(path.Clean(destination), file.Name()))
 			if err != nil {
-				return err
+				return fmt.Errorf("create file %s : %s", path.Clean(destination), err.Error())
 			}
 			defer func() {
 				err = destinationFileBuffer.Close()
@@ -69,7 +70,7 @@ func copyFolder(source string, destination string) error {
 			}()
 			_, err = io.Copy(destinationFileBuffer, sourceFileBuffer)
 			if err != nil {
-				return err
+				return fmt.Errorf("copy file : %s", err.Error())
 			}
 		}
 	}
