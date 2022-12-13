@@ -2,7 +2,7 @@ package configuration
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -11,13 +11,14 @@ import (
 func ParseJSON(source string) (*Configuration, error) {
 	byteValueJSON, err := os.ReadFile(filepath.Clean(source))
 	if err != nil {
-		return nil, errors.New("[ERROR] Reading file : " + err.Error())
+		return nil, fmt.Errorf("reading file : %w", err)
 	}
 	var configuration Configuration
 	err = json.Unmarshal(byteValueJSON, &configuration)
 	if err != nil {
-		return nil, errors.New("[ERROR] Unmarshal JSON : " + err.Error())
+		return nil, fmt.Errorf("unmarshal json : %w", err)
 	}
-	configuration.Destination = CalculateDestination(configuration.Destination)
+	configuration.Destination = CalculatePath(configuration.Destination)
+	configuration.Log = CalculatePath(configuration.Log)
 	return &configuration, nil
 }

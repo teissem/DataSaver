@@ -19,6 +19,7 @@ type Folder struct {
 
 type Configuration struct {
 	Destination  string `json:"destination"`
+	Log          string `json:"log"`
 	Compression  string `json:"compression"`
 	FolderSource Folder `json:"folder"`
 	GitSource    Git    `json:"git"`

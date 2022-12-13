@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"fmt"
 	"os"
 	"path"
 
@@ -11,7 +12,7 @@ import (
 
 func GetGitRepositories(gitConfig *configuration.Git, destination string) error {
 	if gitConfig == nil || gitConfig.Repositories == nil {
-		return nil
+		return fmt.Errorf("gitConfig = %v, gitConfig.Repositories = %v", gitConfig, gitConfig.Repositories)
 	}
 	for _, srcDest := range gitConfig.Repositories {
 		_, err := git.PlainClone(path.Join(destination, srcDest.Destination), false, &git.CloneOptions{
@@ -23,11 +24,11 @@ func GetGitRepositories(gitConfig *configuration.Git, destination string) error 
 			Progress: os.Stdout,
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("git plain clone %s : %w", srcDest.Source, err)
 		}
 		err = os.RemoveAll(path.Join(destination, srcDest.Destination, ".git"))
 		if err != nil {
-			return err
+			return fmt.Errorf("remove .git : %w", err)
 		}
 	}
 	return nil
