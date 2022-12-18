@@ -1,7 +1,6 @@
 package configuration
 
 import (
-	"fmt"
 	"log"
 	"regexp"
 	"strings"
@@ -9,20 +8,20 @@ import (
 )
 
 func CalculatePath(path string) string {
-	re := regexp.MustCompile(`\$\{(.*?)\}`)
+	re := regexp.MustCompile(`\$\{.*\}`)
 	matches := re.FindStringSubmatch(path)
 	currentTime := time.Now()
 	for _, match := range matches {
 		switch match {
-		case "date":
+		case "${date}":
 			date := currentTime.Format("20060102")
-			path = strings.ReplaceAll(path, fmt.Sprintf("${%s}", match), date)
-		case "time":
+			path = strings.ReplaceAll(path, match, date)
+		case "${time}":
 			time := currentTime.Format("150405")
-			path = strings.ReplaceAll(path, fmt.Sprintf("${%s}", match), time)
-		case "datetime":
+			path = strings.ReplaceAll(path, match, time)
+		case "${datetime}":
 			datetime := currentTime.Format("20060102150405")
-			path = strings.ReplaceAll(path, fmt.Sprintf("${%s}", match), datetime)
+			path = strings.ReplaceAll(path, match, datetime)
 		default:
 			log.Printf("Unknown match for path : %s", match)
 		}
