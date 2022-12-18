@@ -23,6 +23,7 @@ func GetFolders(folders *configuration.Folder, destination string) error {
 			}
 			return fmt.Errorf("copy folder : %w", err)
 		}
+		log.Printf("[INFO] Successfully copy %s to %s", srcDest.Source, path.Join(destination, srcDest.Destination))
 	}
 	return nil
 }
