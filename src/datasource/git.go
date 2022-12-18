@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path"
 
@@ -30,6 +31,7 @@ func GetGitRepositories(gitConfig *configuration.Git, destination string) error 
 		if err != nil {
 			return fmt.Errorf("remove .git : %w", err)
 		}
+		log.Printf("[INFO] Successfully copy %s to %s", srcDest.Source, path.Join(destination, srcDest.Destination))
 	}
 	return nil
 }
